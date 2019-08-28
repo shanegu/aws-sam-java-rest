@@ -11,8 +11,8 @@ Globals:
         Timeout: 20
         Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
           Variables:
-            TABLE_NAME:
-            ENDPOINT_OVERRIDE:
+            TABLE_NAME: "order_table"
+            ENDPOINT_OVERRIDE: ""
 
 Resources:
   GetOrderFunction:
@@ -27,6 +27,9 @@ Resources:
           Properties:
             Path: /orders/{order_id}
             Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: 'order_table'
   GetOrdersFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -39,6 +42,9 @@ Resources:
           Properties:
             Path: /orders
             Method: get
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: 'order_table'
   UpdateOrderFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -51,6 +57,9 @@ Resources:
           Properties:
             Path: /orders/{order_id}
             Method: post
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: 'order_table'
   DeleteOrderFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -63,6 +72,9 @@ Resources:
           Properties:
             Path: /orders/{order_id}
             Method: delete
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: 'order_table'
   CreateOrderFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -75,6 +87,9 @@ Resources:
           Properties:
             Path: /orders
             Method: post
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: 'order_table'
   CreateOrdersTableFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -87,6 +102,23 @@ Resources:
           Properties:
             Path: /_create_orders_table
             Method: post
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: '*'
+
+  DataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: "orderId"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "orderId"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: "5"
+        WriteCapacityUnits: "5"
+      TableName: "order_table"
 
 Outputs:
     HelloWorldApi:
