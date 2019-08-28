@@ -8,7 +8,8 @@ Description: >
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
     Function:
-        Timeout: 20
+        Timeout: 30
+        MemorySize: 256
         Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
           Variables:
             TABLE_NAME: "order_table"
@@ -90,21 +91,6 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: 'order_table'
-  CreateOrdersTableFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: target/aws-sam-java-rest-1.0.0.jar
-      Handler: com.amazonaws.handler.CreateOrdersTableHandler::handleRequest
-      Runtime: java8
-      Events:
-        CreateOrdersTable:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /_create_orders_table
-            Method: post
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: '*'
 
   DataTable:
     Type: AWS::DynamoDB::Table
@@ -121,10 +107,6 @@ Resources:
       TableName: "order_table"
 
 Outputs:
-    HelloWorldApi:
-      Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-      Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-
     GetOrderFunction:
       Description: "GetOrder Lambda Function ARN"
       Value: !GetAtt GetOrderFunction.Arn
@@ -144,7 +126,3 @@ Outputs:
     CreateOrderFunction:
       Description: "CreateOrder Lambda Function ARN"
       Value: !GetAtt CreateOrderFunction.Arn
-
-    CreateOrdersTableFunction:
-      Description: "CreateOrdersTable Lambda Function ARN"
-      Value: !GetAtt CreateOrdersTableFunction.Arn
