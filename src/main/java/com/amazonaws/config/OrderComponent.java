@@ -18,12 +18,7 @@
 package com.amazonaws.config;
 
 import com.amazonaws.dao.OrderDao;
-import com.amazonaws.handler.CreateOrderHandler;
-import com.amazonaws.handler.CreateOrdersTableHandler;
-import com.amazonaws.handler.DeleteOrderHandler;
-import com.amazonaws.handler.GetOrderHandler;
-import com.amazonaws.handler.GetOrdersHandler;
-import com.amazonaws.handler.UpdateOrderHandler;
+import com.amazonaws.handler.*;
 import dagger.Component;
 
 import javax.inject.Singleton;
@@ -44,4 +39,6 @@ public interface OrderComponent {
     void inject(GetOrdersHandler requestHandler);
 
     void inject(UpdateOrderHandler requestHandler);
+
+    void inject(CreateOrderPojoHandler requestHandler);
 }

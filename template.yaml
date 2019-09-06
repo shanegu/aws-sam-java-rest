@@ -91,6 +91,21 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: 'order_table'
+  CreateOrderPojoFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/aws-sam-java-rest-1.0.0.jar
+      Handler: com.amazonaws.handler.CreateOrderPojoHandler::handleRequest
+      Runtime: java8
+      Events:
+        CreateOrder:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /orders_v2
+            Method: post
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: 'order_table'
 
   DataTable:
     Type: AWS::DynamoDB::Table
@@ -126,3 +141,7 @@ Outputs:
     CreateOrderFunction:
       Description: "CreateOrder Lambda Function ARN"
       Value: !GetAtt CreateOrderFunction.Arn
+
+    CreateOrderPojoFunction:
+      Description: "CreateOrder Lambda Function ARN"
+      Value: !GetAtt CreateOrderPojoFunction.Arn
